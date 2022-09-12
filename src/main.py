@@ -6,9 +6,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from atscheck import get_resume_text,check
 import time
-import datetime
+import datetime,os
 
-DRIVE_PATH = "/Users/srinivaskoushik/PycharmProjects/linkedInScrape/chromedriver"
+curr_dir = os.getcwd()
+
+DRIVE_PATH = os.path.join(curr_dir,"chromedriver")
 JOB_TITLE_SEARCH_BAR_XPATH = "/html/body/main/section[1]/div/section/div[2]/section[2]/form/section[1]/input"
 EXPERIENCE_LEVEL_XPATH = "/html/body/div[1]/section/div/div/div/form/ul/li[6]/div/div/button"
 LOCATION_XPATH = "/html/body/main/section[1]/div/section/div[2]/section[2]/form/section[2]/input"
@@ -104,6 +106,7 @@ def get_all_jobs():
                 continue
         except:
             run = False
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight-1000);")
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         Y += 100
 
@@ -118,11 +121,12 @@ driver.get("https://www.linkedin.com/jobs")
 enter_job_title_search("software engineering","united states")
 filter_experience_levels(['entry level'])
 time.sleep(3)
-filter_companies(["Goldman Sachs ","Amazon "])
+filter_companies(["The Coca-Cola Company ","Amazon "])
 jobs =  (get_all_jobs())
 resume = get_resume_text("/Users/srinivaskoushik/Documents/resumes/resume.pdf")
 today = datetime.date.today()
-date = today.strftime("%m/%d/%y")
+date = today.strftime("%m-%d-%y")
+FILE_NAME = os.path.join("results","jobs_"+date+".csv")
 ats = []
 for link,des,company,role in jobs:
     ats.append(check([des,resume]))
@@ -131,8 +135,10 @@ text = ""
 for i in range(0,len(ats)):
     link,description,company,role = jobs[i]
     if len(role) > 0:
-        text += str(date) + ","+ str(company) + ","+str(role).replace(","," ") + "," + str(link) +","+ ats[i]+"\n"
+        text += str(company) + ","+str(role).replace(","," ") + "," + str(link) +","+ ats[i]+"\n"
 
-f = open("jobs.csv","a")
+f = open(FILE_NAME,"a")
 f.write(text)
-# driver.quit()
+f.close()
+
+driver.quit()
