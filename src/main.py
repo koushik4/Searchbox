@@ -121,12 +121,16 @@ driver.get("https://www.linkedin.com/jobs")
 enter_job_title_search("software engineering","united states")
 filter_experience_levels(['entry level'])
 time.sleep(3)
-filter_companies(["The Coca-Cola Company ","Amazon "])
+filter_companies(["The Coca-Cola Company  ","Amazon "])
+
 jobs =  (get_all_jobs())
-resume = get_resume_text("/Users/srinivaskoushik/Documents/resumes/resume.pdf")
+RESUME_PATH = "/Users/srinivaskoushik/Documents/resumes/resume.pdf"
+resume = get_resume_text(RESUME_PATH)
 today = datetime.date.today()
 date = today.strftime("%m-%d-%y")
-FILE_NAME = os.path.join("results","jobs_"+date+".csv")
+RESULT_PATH = os.path.join(curr_dir,"results")
+print(RESULT_PATH)
+FILE_NAME = os.path.join(RESULT_PATH,"jobs_"+date+".csv")
 ats = []
 for link,des,company,role in jobs:
     ats.append(check([des,resume]))

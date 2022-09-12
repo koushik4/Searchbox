@@ -30,9 +30,3 @@ def check(text):
     matchPercentage = cosine_similarity(count_matrix)[0][1] * 100
     matchPercentage = round(matchPercentage, 2) # round to two decimal
     return str(matchPercentage)+ "%"
-
-
-f = open('file.txt','r')
-s = f.read()
-s1 = (get_resume_text("/Users/srinivaskoushik/Documents/resumes/resume.pdf"))
-check([s,s1])
