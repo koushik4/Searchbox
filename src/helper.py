@@ -14,6 +14,8 @@ import time
 class Filter:
     def __init__(self, driver):
         self.driver = driver
+        self.file = open("data.log","w")
+        self.file.write("")
         self.JOB_TITLE_SEARCH_BAR_XPATH = "/html/body/main/section[1]/div/section/div[2]/" \
                                           "section[2]/form/section[1]/input"
         self.LOCATION_SEARCH_BAR_XPATH = "/html/body/main/section[1]/div/section/div[2]/" \
@@ -42,14 +44,18 @@ class Filter:
     @:parameter location - Location
     """
     def filter_job_title_search(self, title, location):
-        WebDriverWait(self.driver, 20).until(
-            EC.presence_of_element_located((By.XPATH, self.JOB_TITLE_SEARCH_BAR_XPATH))
-        ).send_keys(title)
-        location_bar = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((
-            By.XPATH, self.LOCATION_SEARCH_BAR_XPATH)))
-        location_bar.clear()
-        location_bar.send_keys(location)
-        location_bar.send_keys(Keys.RETURN)
+        try:
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.XPATH, self.JOB_TITLE_SEARCH_BAR_XPATH))
+            ).send_keys(title)
+            location_bar = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((
+                By.XPATH, self.LOCATION_SEARCH_BAR_XPATH)))
+            location_bar.clear()
+            location_bar.send_keys(location)
+            location_bar.send_keys(Keys.RETURN)
+        except:
+            self.file.write("ERROR FILTERING JOB TITLE \n")
+            print("ERROR FILTERING JOB TITLE")
 
     """
     Filter experience level
@@ -66,89 +72,108 @@ class Filter:
             By.XPATH, done_button_path)))
 
         for level in levels:
-            if level.lower() == 'internship':
-                internship_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_LEVEL_INTERNSHIP_BUTTON_XPATH)
-                internship_button.click()
-                done_button.click()
+            try:
+                if level.lower() == 'internship':
+                    internship_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_LEVEL_INTERNSHIP_BUTTON_XPATH)
+                    internship_button.click()
+                    done_button.click()
 
-            if level.lower() == 'entry level':
-                entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_LEVEL_ENTRY_LEVEL_BUTTON_XPATH)
-                entry_level_button.click()
-                done_button.click()
+                if level.lower() == 'entry level':
+                    entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_LEVEL_ENTRY_LEVEL_BUTTON_XPATH)
+                    entry_level_button.click()
+                    done_button.click()
 
-            if level.lower() == "associate":
-                entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_ASSOCIATE_LEVEL_BUTTON_XPATH)
-                entry_level_button.click()
-                done_button.click()
+                if level.lower() == "associate":
+                    entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_ASSOCIATE_LEVEL_BUTTON_XPATH)
+                    entry_level_button.click()
+                    done_button.click()
 
-            if level.lower() == "mid_senior":
-                entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_MID_SENIOR_LEVEL_BUTTON_XPATH)
-                entry_level_button.click()
-                done_button.click()
+                if level.lower() == "mid_senior":
+                    entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_MID_SENIOR_LEVEL_BUTTON_XPATH)
+                    entry_level_button.click()
+                    done_button.click()
 
-            if level.lower() == "director":
-                entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_DIRECTOR_BUTTON_XPATH)
-                entry_level_button.click()
-                done_button.click()
+                if level.lower() == "director":
+                    entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_DIRECTOR_BUTTON_XPATH)
+                    entry_level_button.click()
+                    done_button.click()
 
-            if level.lower() == "executive":
-                entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_EXECUTIVE_BUTTON_XPATH)
-                entry_level_button.click()
-                done_button.click()
+                if level.lower() == "executive":
+                    entry_level_button = self.driver.find_element(By.XPATH, self.EXPERIENCE_EXECUTIVE_BUTTON_XPATH)
+                    entry_level_button.click()
+                    done_button.click()
+            except:
+                self.file.write("ERROR FILTERING LEVELS \n")
+                print("ERROR FILTERING LEVELS")
+                continue
 
     """
     Filter experience level
     @:param levels - List of all companies for filter
     """
     def filter_companies(self, companies):
-        if len(companies) == 0:
-            return
-        self.driver.find_element(By.XPATH, self.COMPANY_FILTER_BUTTON_XPATH).click()
-        class_name = "typeahead-input__dropdown-item"
-        for company in companies:
-            text = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((
-                By.XPATH, self.COMPANY_FILTER_NAME_XPATH)))
-            text.send_keys(company)
-            time.sleep(2)
-            text.send_keys(" ")
-            res = WebDriverWait(self.driver, 20).until(
-                EC.presence_of_all_elements_located(
-                    (By.CLASS_NAME, class_name)
-                ))
-            if len(res) > 0:
-                text.send_keys(Keys.ARROW_DOWN)
-                text.send_keys(Keys.RETURN)
+        try:
+            if len(companies) == 0:
+                return
+            self.driver.find_element(By.XPATH, self.COMPANY_FILTER_BUTTON_XPATH).click()
+            class_name = "typeahead-input__dropdown-item"
+            for company in companies:
+                text = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((
+                    By.XPATH, self.COMPANY_FILTER_NAME_XPATH)))
+                text.send_keys(company)
+                time.sleep(1.5)
+                text.send_keys(" ")
+                time.sleep(1.5)
+                text.send_keys(" ")
+                res = WebDriverWait(self.driver, 20).until(
+                        EC.presence_of_all_elements_located(
+                            (By.CLASS_NAME, class_name)
+                        ))
+                if len(res) > 0:
+                    text.send_keys(Keys.ARROW_DOWN)
+                    text.send_keys(Keys.RETURN)
+        except:
+            self.file.write(company.upper()+" NOT FOUND \n")
+            print(company+" NOT FOUND")
 
     def filter_companies_and_experience_levels(self, levels, companies):
-        self.filter_experience_levels(levels)
-        self.filter_companies(companies)
-        done = "/html/body/div[1]/section/div/div/div/form[1]/ul/li[3]/div/div/div/button"
-        self.driver.find_element(By.XPATH, done).click()
+        try:
+            self.filter_experience_levels(levels)
+            self.filter_companies(companies)
+            done = "/html/body/div[1]/section/div/div/div/form[1]/ul/li[3]/div/div/div/button"
+            self.driver.find_element(By.XPATH, done).click()
+        except:
+            self.file.write("ERROR APPLYING FILTERS \n")
+            print("ERROR APPLYING FILTERS")
 
 
 class Jobs:
     curr_dir = os.getcwd()
-
     def __init__(self):
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        options = webdriver.ChromeOptions()
+        # options.headless = True
+        self.driver = webdriver.Chrome(options=options,service=Service(ChromeDriverManager().install()))
         self.driver.implicitly_wait(10)
         self.filter_helper = Filter(self.driver)
         self.URL = "https://www.linkedin.com/jobs"
         self.JOB_RESULTS_XPATH = "/html/body/div[1]/div/main/section[2]/ul"
         self.DESCRIPTION_CLASS = "show-more-less-html__markup"
         self.COMPANY_CLASS = "base-search-card__subtitle"
+        self.file = open("data.log","w")
 
     """
     Direct the chromedriver to linked.com/jobs 
     """
     def direct(self):
+        self.driver.minimize_window()
         self.driver.get(self.URL)
-
+        
     """
     Close the chromedriver
     """
     def close(self):
         self.driver.quit()
+        self.file.close()
 
     """
     Filter the jobs based on title, location, levels and companies
@@ -166,43 +191,55 @@ class Jobs:
     @:return list([link, description, company, role]) 
     """
     def get_jobs(self):
-        job_results = self.driver.find_element(By.XPATH, self.JOB_RESULTS_XPATH)
-        results = job_results.find_elements(By.CLASS_NAME, "base-search-card__title")
-        ans = []
-        run = True
-        count = 1
-        Y = 0
-        print("results are ", len(results))
-        while run:
-            try:
-                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                res = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH,"/html/body/div[1]/div/main/section[2]/ul/li[" + str(count) + "]/div/a")))
-                res.click()
-                time.sleep(2)
-                description = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located(
-                    (By.CLASS_NAME,self.DESCRIPTION_CLASS)))
-                company = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable(
-                    (By.CLASS_NAME, self.COMPANY_CLASS)))
-                role = self.driver.find_element(By.XPATH,
-                                           "//html/body/div[1]/div/main/section[2]/ul/li[" + str(count) + "]/div/a/span")
+        try:
+            job_results = self.driver.find_element(By.XPATH, self.JOB_RESULTS_XPATH)
+            results = job_results.find_elements(By.CLASS_NAME, "base-search-card__title")
+            ans = []
+            run = True
+            count = 1
+            Y = 0
+            while run:
                 try:
-                    link = self.driver.find_element(By.XPATH,
-                                               "/html/body/div[1]/div/section/div[2]/"
-                                               "section/div/div[1]/div/div/a").get_attribute('href')
-
-                    ans.append([link, description.text, company.text, role.text.replace(",", "")])
+                    print("PROCESSING JOB"+str(count))
+                    self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                    res = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable(
+                        (By.XPATH,"/html/body/div[1]/div/main/section[2]/ul/li[" + str(count) + "]/div/a")))
+                    res.click()
                 except:
-                    link = self.driver.current_url
-                    print(link)
-                    ans.append([link, description.text, company.text, role.text])
-                    count += 1
+                    run = False
                     continue
-                count += 1
-            except:
-                run = False
+                
+                time.sleep(2.25)
+                try:
+                    description = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located(
+                        (By.CLASS_NAME,self.DESCRIPTION_CLASS)))
+                    company = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located(
+                        (By.CLASS_NAME, self.COMPANY_CLASS)))
+                    role = self.driver.find_element(By.XPATH,
+                                            "//html/body/div[1]/div/main/section[2]/ul/li[" + str(count) + "]/div/a/span")
+                    try:
+                        link = self.driver.find_element(By.XPATH,
+                                                    "/html/body/div[1]/div/section/div[2]/"
+                                                "section/div/div[1]/div/div/a").get_attribute('href')
 
-        return ans
+                        ans.append([link, description.text, company.text, role.text.replace(",", "")])
+                    except:
+                        link = self.driver.current_url
+                        ans.append([link, description.text, company.text, role.text])
+                        continue
+                except:
+                    self.file.write("ERROR PROCESSING JOB "+str(count)+" \n")
+                    print("ERROR PROCESSING JOB "+str(count))
+                count += 1   
+
+            print("PROCESSED "+str(count)+ " JOBS")
+            self.file.write("SUCCESS \n")
+            print("SUCCESS \n")
+            return ans
+        except:
+            self.file.write("SUCCESS \n")
+            print("ERROR PROCESSING JOBS")
+            return []
 
 
 class Export:
@@ -240,12 +277,12 @@ class Export:
         text = ""
         count = 0
         for i in range(0, len(jobs)):
-            print(jobs[i])
+            # print(jobs[i])
             link, description, company, role = jobs[i]
             if len(link) > 0:
                 count += 1
                 text += str(company) + "," + str(role).replace(",", " ") + "," + str(link) + "," + ats[i] + "\n"
-        print(count)
+        # print(count)
         if not os.path.exists(FILE_NAME):
             f = open(FILE_NAME, "w")
             f.write("Company Name,Role,Job link, Similarity Score \n")
@@ -254,15 +291,15 @@ class Export:
         f.write(text)
         f.close()
 
-INTERNSHIP = 'internship'
-ENTRY_LEVEL = 'entry level'
+# INTERNSHIP = 'internship'
+# ENTRY_LEVEL = 'entry level'
 
-jobs = Jobs()
-jobs.direct()
-jobs.filter("software engineering","united states",["internship"],["Amazon"])
-all_jobs = jobs.get_jobs()
+# jobs = Jobs()
+# jobs.direct()
+# jobs.filter("software engineering","united states",["internship"],["Amazon"])
+# all_jobs = jobs.get_jobs()
 
-export = Export("/Users/srinivaskoushik/Documents/resumes/resume.pdf")
-ats = export.get_ats_score(all_jobs)
-export.export(all_jobs,ats)
-jobs.close()
+# export = Export("/Users/srinivaskoushik/Documents/resumes/resume.pdf")
+# ats = export.get_ats_score(all_jobs)
+# export.export(all_jobs,ats)
+# jobs.close()

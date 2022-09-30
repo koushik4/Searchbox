@@ -1,6 +1,4 @@
 #!/bin/bash
 
-pip3 install selenium
-pip3 install pdfminer
-pip3 install webdriver_manager
-python3 src/helper.py
+pip3 install selenium pdfminer webdriver_manager sklearn
+python3 src/gui.py
